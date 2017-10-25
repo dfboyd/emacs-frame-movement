@@ -16,34 +16,23 @@
 (defun frame-movement/sort-by-position (framelist)
   (sort framelist #'frame-movement/frame-rowmajor))
 
-(defun frame-movement/find-next-frame-recursive (frame first-frame frame-list)
-  (cond ((null frame-list) first-frame)
-	((eq frame (car frame-list)) (if (null (cdr frame-list))
-					first-frame
-				      (car (cdr frame-list))))
-	(t (frame-movement/find-next-frame-recursive frame
-					     first-frame
-					     (cdr frame-list)))))
-
-(defun frame-movement/select-next-frame ()
-  (interactive)
+(defun frame-movement/select-frame-offset (offset)
   (let* ((sorted-frames (frame-movement/sort-by-position (visible-frame-list)))
-	 (zero-frame (car sorted-frames))
-	 (target-frame (frame-movement/find-next-frame-recursive (selected-frame)
-							 zero-frame
-							 sorted-frames)))
+	 (sorted-frames-vector (vconcat sorted-frames))
+	 (current-frame-index (seq-position sorted-frames-vector 
+					    (selected-frame)))
+	 (frame-count (length sorted-frames-vector))
+	 (target-index (mod (+ current-frame-index offset) frame-count))
+	 (target-frame (elt sorted-frames-vector target-index)))
     (select-frame-set-input-focus target-frame)))
 
-(defun frame-movement/select-prev-frame ()
-  (interactive)
-  (let* ((sorted-frames (reverse (frame-movement/sort-by-position
-				  (visible-frame-list))))
-	 (zero-frame (car sorted-frames))
-	 (target-frame (frame-movement/find-next-frame-recursive (selected-frame)
-							 zero-frame
-							 sorted-frames)))
-    (select-frame-set-input-focus target-frame)))
+(defun frame-movement/select-next-frame (arg)
+  (interactive "p")
+  (frame-movement/select-frame-offset arg))
+
+(defun frame-movement/select-prev-frame (arg)
+  (interactive "p")
+  (frame-movement/select-frame-offset (- arg)))
 
 (global-set-key (kbd "C-x 5 n") 'frame-movement/select-next-frame)
 (global-set-key (kbd "C-x 5 p") 'frame-movement/select-prev-frame)
-
