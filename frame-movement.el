@@ -15,7 +15,7 @@ same height, the first one is on the left."
 	 (bx (car frame-b-pos))
 	 (by (cdr frame-b-pos)))
     (and (<= ay by)
-	 (<= ax bx))))
+	 (< ax bx))))
 
 (defun frame-movement/sort-by-position (framelist)
   (sort framelist #'frame-movement/frame-rowmajor))
