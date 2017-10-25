@@ -17,12 +17,13 @@
   (sort framelist #'frame-movement/frame-rowmajor))
 
 (defun frame-movement/select-frame-offset (offset)
-  (let* ((sorted-frames (frame-movement/sort-by-position (visible-frame-list)))
-	 (sorted-frames-vector (vconcat sorted-frames))
+  (let* ((sorted-frames-vector (vconcat
+				(frame-movement/sort-by-position
+				 (visible-frame-list))))
 	 (current-frame-index (seq-position sorted-frames-vector 
 					    (selected-frame)))
-	 (frame-count (length sorted-frames-vector))
-	 (target-index (mod (+ current-frame-index offset) frame-count))
+	 (target-index (mod (+ current-frame-index offset) 
+			    (length sorted-frames-vector)))
 	 (target-frame (elt sorted-frames-vector target-index)))
     (select-frame-set-input-focus target-frame)))
 
