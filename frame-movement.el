@@ -10,8 +10,9 @@
 	 (frame-b-pos (frame-position frame-b))
 	 (bx (car frame-b-pos))
 	 (by (cdr frame-b-pos)))
-    (and (<= ax bx)
-	 (<= ay by))))
+    (or (< ax bx)
+	(and (= ax bx)
+	     (< ay by)))))
 
 (defun frame-movement/sort-by-position (framelist)
   (sort framelist #'frame-movement/frame-rowmajor))
